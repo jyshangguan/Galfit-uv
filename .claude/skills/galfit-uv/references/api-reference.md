@@ -290,6 +290,9 @@ fit_mcmc(dvis, model_fn, param_info, p_init=None,
 
 **Details:**
 - Uses dill-based `_DillPool` for multiprocessing (handles closures).
+- **Import order matters:** `import galfit_uv` must come before any `import numpy` in the
+  user's script.  Otherwise numpy's multi-threaded BLAS will consume all CPU cores,
+  making parallel MCMC (`n_workers > 1`) extremely slow.
 - Prior types: `sin(incl)` for inclination, Jeffreys (`1/theta`) for `'log'`-scale params, uniform for `'linear'`.
 - Walker init: random from prior, or 0.1% perturbation around `p_init` if provided.
 - `p_init` values outside prior bounds raise `ValueError`.

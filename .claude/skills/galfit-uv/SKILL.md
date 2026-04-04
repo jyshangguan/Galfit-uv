@@ -19,6 +19,13 @@ optionally generate clean images.
 - The galfit_uv package is importable (`import galfit_uv`).
 - The measurement set (`.ms`) exists at the path the user provides.
 
+**IMPORTANT — Import order:** `import galfit_uv` **must** appear before any `import numpy`
+(or other library that imports numpy).  The package's `__init__.py` sets environment
+variables that limit numpy's internal BLAS threads to 1, preventing numpy from
+spawning threads on every CPU core.  If numpy is imported first, it locks in the
+default thread count and each MCMC worker will compete for cores, making
+multi-worker fits extremely slow.
+
 ## Workflow
 
 ### Step 1 — Export visibilities
@@ -116,6 +123,9 @@ result = fit_mcmc(
 - `nwalk_factor`: number of walkers = `nwalk_factor * n_free`.
 - `burnin`: steps to discard; should be >= the autocorrelation time.
 - `n_workers`: parallel workers; set to 1 for debugging.
+- **Ensure `galfit_uv` was imported before numpy** (see Prerequisites), otherwise
+  numpy's multi-threaded BLAS will consume all cores and the parallel MCMC will be
+  orders of magnitude slower.
 - Returns `MCMCResult` with `.bestfit`, `.samples`, `.labels`, `.outpath`.
 
 **Output files** (in `outpath`):
