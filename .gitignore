@@ -6,5 +6,10 @@ build/
 .eggs/
 *.fits
 *.npz
-demo/fit_output_*/
-demo/clean_output_*/
+casa-*.log
+
+# Demo runtime outputs
+galfit_uv/demo/fit_output_*/
+galfit_uv/demo/clean_output_*/
+galfit_uv/demo/data/*.ms/
+galfit_uv/demo/*.txt
