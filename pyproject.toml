@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "galfit-uv"
+version = "0.1.0"
+description = "Parametric UV visibility fitting for ALMA data"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy",
+    "scipy",
+    "emcee",
+    "dill",
+    "matplotlib",
+    "corner",
+    "astropy",
+]
+
+[tool.setuptools.packages.find]
+include = ["galfit_uv*"]
