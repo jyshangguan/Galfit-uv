@@ -1,0 +1,6 @@
+/* Constrain image widths in content */
+.md-content img {
+  max-width: 600px;
+  width: auto;
+  height: auto;
+}

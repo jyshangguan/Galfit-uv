@@ -117,13 +117,13 @@ The high Sersic index (n ~ 7.4, well above de Vaucouleurs n=4) indicates a very 
 
 ### Figures
 
-<img src="figs/uvplot_sersic.png" alt="UV plot" width="600">
+![UV plot](figs/uvplot_sersic.png)
 
-<img src="figs/corner_plot_sersic.png" alt="Corner plot" width="600">
+![Corner plot](figs/corner_plot_sersic.png)
 
-<img src="figs/chains_sersic.png" alt="Walker chains" width="600">
+![Walker chains](figs/chains_sersic.png)
 
-<img src="figs/clean_images_sersic.png" alt="Clean images" width="600">
+![Clean images](figs/clean_images_sersic.png)
 
 ---
 
@@ -148,13 +148,13 @@ The model decomposes the source into an extended exponential disk (~7.2 mJy, Re 
 
 ### Figures
 
-<img src="figs/uvplot_2comp.png" alt="UV plot" width="600">
+![UV plot](figs/uvplot_2comp.png)
 
-<img src="figs/corner_plot_2comp.png" alt="Corner plot" width="600">
+![Corner plot](figs/corner_plot_2comp.png)
 
-<img src="figs/chains_2comp.png" alt="Walker chains" width="600">
+![Walker chains](figs/chains_2comp.png)
 
-<img src="figs/clean_images_2comp.png" alt="Clean images" width="600">
+![Clean images](figs/clean_images_2comp.png)
 
 ---
 

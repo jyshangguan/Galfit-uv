@@ -26,3 +26,6 @@ markdown_extensions:
   - pymdownx.details
   - toc:
       permalink: true
+
+extra_css:
+  - css/extra.css
