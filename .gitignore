@@ -8,6 +8,9 @@ build/
 *.npz
 casa-*.log
 
+# Docs build output
+site/
+
 # Demo runtime outputs
 galfit_uv/demo/fit_output_*/
 galfit_uv/demo/clean_output_*/

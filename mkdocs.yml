@@ -1,0 +1,28 @@
+site_name: galfit-uv
+docs_dir: docs
+site_dir: site
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+  features:
+    - navigation.top
+    - toc.follow
+
+nav:
+  - Home: index.md
+  - Examples: examples.md
+  - API Reference: api.md
+
+markdown_extensions:
+  - admonition
+  - tables
+  - attr_list
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.tabbed
+  - pymdownx.details
+  - toc:
+      permalink: true
