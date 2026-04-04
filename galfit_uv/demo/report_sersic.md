@@ -36,7 +36,9 @@ dvis, wle = export_vis('target_avg.ms', timebin=10.0, verbose=True)
 # wle               — wavelength [m]
 ```
 
-**Demo output:** `GQC_J0054-4955_uv.txt` (1980 points, uv range 5--111 klambda, wavelength 2.817 mm).
+**Demo data:** `data/GQC_J0054-4955_avg.ms` (bundled with the package, gitignored).
+
+**Demo output:** `GQC_J0054-4955_uv.txt` (1980 points, uv range 5--111 klambda, wavelength 2.817 mm; regenerated at each run).
 
 ---
 
@@ -188,16 +190,18 @@ The geometry parameters (center offset) are nearly identical between the two mod
 
 ```
 demo/
+  data/
+    GQC_J0054-4955_avg.ms  # Measurement set (gitignored)
   run_demo_sersic.py    # Sersic demo script
-  GQC_J0054-4955_uv.txt # Exported uv-table (shared)
-  fit_output_sersic/
-    fit_results.fits    # Multi-extension FITS (data, model, bestfit, samples)
+  GQC_J0054-4955_uv.txt # Exported uv-table (gitignored, regenerated)
+  fit_output_sersic/    # MCMC output (gitignored)
+    fit_results.fits
     chains.png
     corner_plot.png
   figs/
-    uvplot_sersic.png          # Data vs model, real-only, log-scale
-    corner_plot_sersic.png     # Posterior distributions
-    chains_sersic.png          # Multi-panel walker chains with tau
-    clean_images_sersic.png    # Clean image comparison
-  clean_output_sersic/         # tclean output
+    uvplot_sersic.png
+    corner_plot_sersic.png
+    chains_sersic.png
+    clean_images_sersic.png
+  clean_output_sersic/ # tclean output (gitignored)
 ```

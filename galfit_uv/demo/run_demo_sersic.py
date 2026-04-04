@@ -35,7 +35,7 @@ print("=" * 60)
 print("1. Exporting visibility data from MS")
 print("=" * 60)
 
-MS_FILE = '/home/shangguan/Work/ALMA/z2qso_submm/works/visfit/GQC_J0054-4955_avg.ms'
+MS_FILE = str(DEMO_DIR / 'data' / 'GQC_J0054-4955_avg.ms')
 
 dvis, wle = export_vis(MS_FILE, verbose=True)
 print(f"\nExtracted {len(dvis.u)} visibility points")

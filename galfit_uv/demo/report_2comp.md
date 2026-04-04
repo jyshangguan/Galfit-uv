@@ -52,7 +52,9 @@ from galfit_uv.export import save_uvtable
 save_uvtable(dvis.u, dvis.v, dvis.vis, dvis.wgt, 'uv.txt', wle=wle)
 ```
 
-**Demo output:** `GQC_J0054-4955_uv.txt` (1980 points, verified readable by uvplot).
+**Demo data:** `data/GQC_J0054-4955_avg.ms` (bundled with the package, gitignored).
+
+**Demo output:** `GQC_J0054-4955_uv.txt` (1980 points, regenerated at each run).
 
 ---
 
