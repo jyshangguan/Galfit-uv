@@ -52,6 +52,11 @@ Multi-component models (e.g., `['sersic', 'point']`) support configurable
 geometry tying via `tie_center`, `tie_incl`, `tie_pa` flags, and fixed
 parameters via the `fixed` dict.
 
+## Demo Data
+
+The measurement set used in the examples (GQC J0054-4955, CO(3-2), z~2.5) can be
+downloaded from: https://drive.google.com/file/d/1TPZQvP-7wc5Kk169Gh6IgiYAUoaug2bb/view?usp=sharing
+
 ## Dependencies
 
 - `numpy`, `scipy`, `emcee`, `dill`, `matplotlib`, `corner`, `astropy`
@@ -60,3 +65,7 @@ parameters via the `fixed` dict.
 ## License
 
 Internal use. See source code for details.
+
+## Documentation
+
+Full documentation is hosted at: https://jyshangguan.github.io/Galfit-uv/
