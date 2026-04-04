@@ -7,10 +7,8 @@ a single free-n Sersic and a Sersic(n=1) + point source decomposition.
 
 **GQC J0054-4955** observed in CO(3-2) at z ~ 2.5.
 
-!!! note "Demo data"
-
-    The measurement set can be downloaded from:
-    <https://drive.google.com/file/d/1TPZQvP-7wc5Kk169Gh6IgiYAUoaug2bb/view?usp=sharing>
+> **Demo data:** The measurement set can be downloaded from:
+> <https://drive.google.com/file/d/1TPZQvP-7wc5Kk169Gh6IgiYAUoaug2bb/view?usp=sharing>
 
 - 1980 visibility points after time-averaging
 - UV range: 5 -- 111 kilo-lambda
@@ -53,26 +51,26 @@ Total flux (zero-baseline): 19.17 mJy
 
 ## Step 2: Build the Model
 
-=== "Model A — Single Sersic"
+**Model A — Single Sersic:**
 
-    ```python
-    from galfit_uv.models import make_model_fn
+```python
+from galfit_uv.models import make_model_fn
 
-    model_fn, param_info = make_model_fn(['sersic'])
-    # labels = ['flux', 'Re', 'n', 'incl', 'PA', 'dx', 'dy']
-    ```
+model_fn, param_info = make_model_fn(['sersic'])
+# labels = ['flux', 'Re', 'n', 'incl', 'PA', 'dx', 'dy']
+```
 
-=== "Model B — Sersic(n=1) + Point"
+**Model B — Sersic(n=1) + Point:**
 
-    ```python
-    from galfit_uv.models import make_model_fn
+```python
+from galfit_uv.models import make_model_fn
 
-    model_fn, param_info = make_model_fn(
-        ['sersic', 'point'],
-        fixed={'sersic:n': 1.0},
-    )
-    # labels = ['sersic:flux', 'sersic:Re', 'point:flux', 'incl', 'PA', 'dx', 'dy']
-    ```
+model_fn, param_info = make_model_fn(
+    ['sersic', 'point'],
+    fixed={'sersic:n': 1.0},
+)
+# labels = ['sersic:flux', 'sersic:Re', 'point:flux', 'incl', 'PA', 'dx', 'dy']
+```
 
 ## Step 3: Run MCMC
 
@@ -119,13 +117,13 @@ The high Sersic index (n ~ 7.4, well above de Vaucouleurs n=4) indicates a very 
 
 ### Figures
 
-![UV plot](figs/uvplot_sersic.png){ width="600" }
+<img src="figs/uvplot_sersic.png" alt="UV plot" width="600">
 
-![Corner plot](figs/corner_plot_sersic.png){ width="600" }
+<img src="figs/corner_plot_sersic.png" alt="Corner plot" width="600">
 
-![Walker chains](figs/chains_sersic.png){ width="600" }
+<img src="figs/chains_sersic.png" alt="Walker chains" width="600">
 
-![Clean images](figs/clean_images_sersic.png){ width="600" }
+<img src="figs/clean_images_sersic.png" alt="Clean images" width="600">
 
 ---
 
@@ -150,13 +148,13 @@ The model decomposes the source into an extended exponential disk (~7.2 mJy, Re 
 
 ### Figures
 
-![UV plot](figs/uvplot_2comp.png){ width="600" }
+<img src="figs/uvplot_2comp.png" alt="UV plot" width="600">
 
-![Corner plot](figs/corner_plot_2comp.png){ width="600" }
+<img src="figs/corner_plot_2comp.png" alt="Corner plot" width="600">
 
-![Walker chains](figs/chains_2comp.png){ width="600" }
+<img src="figs/chains_2comp.png" alt="Walker chains" width="600">
 
-![Clean images](figs/clean_images_2comp.png){ width="600" }
+<img src="figs/clean_images_2comp.png" alt="Clean images" width="600">
 
 ---
 

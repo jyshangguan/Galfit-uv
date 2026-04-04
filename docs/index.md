@@ -30,9 +30,7 @@ pip install -e /path/to/Galfit-uv
 | `astropy` | pip / conda |
 | `casatools`, `casatasks` | CASA conda environment (not pip-installable) |
 
-!!! note
-
-    Always import `galfit_uv` (not submodules directly) so that `__init__.py` can set threading environment variables before numpy loads.
+> **Note:** Always import `galfit_uv` (not submodules directly) so that `__init__.py` can set threading environment variables before numpy loads.
 
 ## Quick Start
 
@@ -60,10 +58,7 @@ mvis = model_fn(result.bestfit, uv)
 galfit_uv.plot_uv(dvis, mvis, outpath='./figs', fname='uvplot.png')
 ```
 
-!!! note "Demo data"
-
-    The measurement set used in the examples (GQC J0054-4955) can be downloaded from:
-    <https://drive.google.com/file/d/1TPZQvP-7wc5Kk169Gh6IgiYAUoaug2bb/view?usp=sharing>
+> **Demo data:** The measurement set used in the examples (GQC J0054-4955) can be downloaded from: <https://drive.google.com/file/d/1TPZQvP-7wc5Kk169Gh6IgiYAUoaug2bb/view?usp=sharing>
 
 ## Available Profiles
 

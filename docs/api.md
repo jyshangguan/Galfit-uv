@@ -356,9 +356,7 @@ import_model_to_ms(msfile, u, v, mvis, wle, suffix='model',
 | `make_resid` | bool | `False` | Also create a residual MS |
 | `datacolumn` | str | `'DATA'` | Column to read original data from |
 
-!!! note
-
-    When using for tclean, pass `datacolumn='CORRECTED_DATA'` (tclean reads the `corrected` column by default).
+> **Note:** When using for tclean, pass `datacolumn='CORRECTED_DATA'` (tclean reads the `corrected` column by default).
 
 ---
 
