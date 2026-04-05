@@ -86,3 +86,13 @@ Multi-component models (e.g., `['sersic', 'point']`) support configurable geomet
 
 - **[Examples](examples.md)** — Walk through fitting real ALMA data (GQC J0054-4955) with two different models
 - **[API Reference](api.md)** — Full function signatures, parameters, and return values
+
+## Citation
+
+If you use `galfit_uv` in your research, please cite:
+
+> Long, F. et al. 2021, ApJ, 915, 131 — [ADS](https://ui.adsabs.harvard.edu/abs/2021ApJ...915..131L/abstract)
+
+## Acknowledgements
+
+Development of this code was assisted by [Claude Code](https://claude.com/claude-code) and [GLM-5](https://bigmodel.cn).

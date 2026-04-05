@@ -62,6 +62,16 @@ downloaded from: https://drive.google.com/file/d/1TPZQvP-7wc5Kk169Gh6IgiYAUoaug2
 - `numpy`, `scipy`, `emcee`, `dill`, `matplotlib`, `corner`, `astropy`
 - `casatools`, `casatasks` — from the CASA conda environment (not pip-installable)
 
+## Citation
+
+If you use `galfit_uv` in your research, please cite:
+
+> Long, F. et al. 2021, ApJ, 915, 131 — [ADS](https://ui.adsabs.harvard.edu/abs/2021ApJ...915..131L/abstract)
+
+## Acknowledgements
+
+Development of this code was assisted by [Claude Code](https://claude.com/claude-code) and [GLM-5](https://bigmodel.cn).
+
 ## License
 
 Internal use. See source code for details.
