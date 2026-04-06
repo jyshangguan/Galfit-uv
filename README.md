@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/figs/logo.png" alt="Galfit-uv logo" width="400">
+</p>
+
 # Galfit-uv
 
 Parametric UV visibility fitting for ALMA data. Extracts visibilities from

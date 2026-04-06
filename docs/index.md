@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="figs/logo.png" alt="Galfit-uv logo" width="400">
+</p>
+
 # galfit-uv
 
 Parametric UV visibility fitting for ALMA data. galfit-uv extracts visibilities from CASA measurement sets, fits surface-brightness models (point source, Gaussian, Sersic) via MCMC using numerical Hankel transforms, and produces UV plots, clean images, and diagnostic figures. The package supports multi-component models with configurable geometry tying and fixed-parameter constraints.
