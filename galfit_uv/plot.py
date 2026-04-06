@@ -284,6 +284,127 @@ def plot_uv(dvis, mvis=None, n_bins=15, scale='log', use_std=True,
         return fig
 
 
+def _read_row_shapes(tb, colname, nrows):
+    """Read per-row shapes of a (possibly variable) column.
+
+    Returns list of ``shape`` tuples, one per row.  For variable columns
+    the shapes preserve trailing dimensions (no squeeze) to match what
+    ``putvarcol`` expects.
+    """
+    if not tb.isvarcol(colname):
+        arr = np.squeeze(tb.getcol(colname))
+        return [arr.shape] * nrows
+
+    data_dict = tb.getvarcol(colname)
+    keys = sorted(data_dict.keys(), key=lambda k: int(k[1:]))
+    return [np.asarray(data_dict[k]).shape for k in keys]
+
+
+def _contiguous_shape_runs(row_shapes):
+    """Yield (start, end, shape) for contiguous runs of identical shapes."""
+    if not row_shapes:
+        return
+    current = row_shapes[0]
+    start = 0
+    for i in range(1, len(row_shapes)):
+        if row_shapes[i] != current:
+            yield start, i, current
+            current = row_shapes[i]
+            start = i
+    yield start, len(row_shapes), current
+
+
+def _write_model_col(tb, colname, mvis, unflagged, n_use, nrows, row_shapes):
+    """Write model visibilities into a column, handling variable shapes.
+
+    For rows with channels (ndim >= 3), the model flux is divided equally
+    among channels.
+    """
+    if not tb.isvarcol(colname):
+        # Fixed-shape column — use putcol
+        rs = row_shapes[0]
+        if rs[-1] != nrows:
+            full = np.zeros((rs[0], rs[1], nrows) if len(rs) >= 2
+                           else (rs[0], nrows),
+                           dtype=np.complex128)
+        else:
+            full = np.zeros_like(tb.getcol(colname), dtype=np.complex128)
+
+        if full.ndim == 3:
+            n_chan = full.shape[1]
+            mvis_per_chan = mvis[:n_use] / n_chan
+            for ichan in range(n_chan):
+                full[:, ichan, unflagged] = mvis_per_chan
+        elif full.ndim == 2:
+            full[:, unflagged] = mvis[:n_use]
+        tb.putcol(colname, full)
+    else:
+        # Variable-shape column — use putvarcol in contiguous-shape batches
+        BATCH = 200
+        unflag_idx = 0
+        for run_start, run_end, shape in _contiguous_shape_runs(row_shapes):
+            n_chan = shape[1] if len(shape) >= 3 else 1
+            for batch_s in range(run_start, run_end, BATCH):
+                batch_e = min(batch_s + BATCH, run_end)
+                n_in = batch_e - batch_s
+                batch_dict = {}
+                for j in range(n_in):
+                    row_i = batch_s + j
+                    if unflagged[row_i] and unflag_idx < n_use:
+                        val = mvis[unflag_idx]
+                        unflag_idx += 1
+                    else:
+                        val = 0.0 + 0.0j
+                    arr = np.full(shape, val / n_chan, dtype=np.complex128)
+                    batch_dict[f'r{j}'] = arr
+                tb.putvarcol(colname, batch_dict,
+                             startrow=batch_s, nrow=n_in)
+
+
+def _write_resid_col(tb, colname, mvis, unflagged, n_use, nrows, row_shapes):
+    """Subtract model visibilities from a column (in-place residual)."""
+    if not tb.isvarcol(colname):
+        rs = row_shapes[0]
+        if rs[-1] != nrows:
+            full = np.zeros((rs[0], rs[1], nrows) if len(rs) >= 2
+                           else (rs[0], nrows),
+                           dtype=np.complex128)
+        else:
+            full = tb.getcol(colname).copy().astype(np.complex128)
+
+        if full.ndim == 3:
+            n_chan = full.shape[1]
+            mvis_per_chan = mvis[:n_use] / n_chan
+            for ichan in range(n_chan):
+                full[:, ichan, unflagged] -= mvis_per_chan
+        elif full.ndim == 2:
+            full[:, unflagged] -= mvis[:n_use]
+        tb.putcol(colname, full)
+    else:
+        # Read all original data first, then subtract model from unflagged rows
+        data_dict = tb.getvarcol(colname)
+        keys = sorted(data_dict.keys(), key=lambda k: int(k[1:]))
+
+        BATCH = 200
+        unflag_idx = 0
+        for run_start, run_end, shape in _contiguous_shape_runs(row_shapes):
+            n_chan = shape[1] if len(shape) >= 3 else 1
+            for batch_s in range(run_start, run_end, BATCH):
+                batch_e = min(batch_s + BATCH, run_end)
+                n_in = batch_e - batch_s
+                batch_dict = {}
+                for j in range(n_in):
+                    row_i = batch_s + j
+                    orig = np.asarray(data_dict[keys[row_i]]).astype(
+                        np.complex128)
+                    if unflagged[row_i] and unflag_idx < n_use:
+                        orig -= mvis[unflag_idx] / n_chan
+                        unflag_idx += 1
+                    batch_dict[f'r{j}'] = orig
+                tb.putvarcol(colname, batch_dict,
+                             startrow=batch_s, nrow=n_in)
+
+
 def import_model_to_ms(msfile, u, v, mvis, wle, suffix='model',
                        make_resid=False, datacolumn='DATA'):
     """Import model visibilities into a measurement set for CASA imaging.
@@ -319,50 +440,37 @@ def import_model_to_ms(msfile, u, v, mvis, wle, suffix='model',
     os.system(f'rm -rf {model_ms}')
     os.system(f'cp -r {msfile} {model_ms}')
 
-    # Read original data and flags
-    from galfit_uv.export import _getvarcol_safe, _getvarcol_flag
+    # Read flags to determine unflagged rows using actual MS row count
+    from galfit_uv.export import _getvarcol_flag
     tb_tool.open(model_ms)
-    data = _getvarcol_safe(tb_tool, datacolumn)
+    n_rows_ms = tb_tool.nrows()
+
+    # Read per-row shapes of the data column and flags
+    row_shapes = _read_row_shapes(tb_tool, datacolumn, n_rows_ms)
     flag = _getvarcol_flag(tb_tool, 'FLAG')
     tb_tool.close()
 
-    # data shape: (n_pol, n_rows)
-    n_pol = data.shape[0]
-    n_rows_data = data.shape[-1]
-
-    # Get unflagged mask
     if flag.ndim == 2:
         unflagged = ~np.any(flag, axis=0)
     else:
         unflagged = ~flag
-    unflagged = unflagged[:n_rows_data]
 
-    # Trim model visibilities to match n_rows
-    n_model = len(mvis)
-    n_use = min(n_rows_data, n_model)
-
-    # Construct complex data array: same visibility in both polarizations
-    mdl_array = np.zeros((n_pol, n_rows_data), dtype=np.complex128)
-    mdl_array[:, unflagged[:n_use]] = mvis[:n_use]
-
-    # Write back
-    tb_tool.open(model_ms, nomodify=False)
-    # Need to reconstruct the full DATA shape including channels.
-    # Read the shape to know how to expand.
-    original_data = np.squeeze(tb_tool.getcol(datacolumn))
-    # original_data may be (n_pol, n_chan, n_rows) or (n_pol, n_rows)
-    if original_data.ndim == 3:
-        n_chan = original_data.shape[1]
-        full_model = np.zeros_like(original_data, dtype=np.complex128)
-        # Divide model flux equally among channels
-        for ichan in range(n_chan):
-            full_model[:, ichan, :] = mdl_array / n_chan
-    elif original_data.ndim == 2:
-        full_model = mdl_array.copy()
+    # Ensure unflagged matches the actual MS row count.
+    # _getvarcol_flag can return fewer rows for variable columns.
+    if len(unflagged) < n_rows_ms:
+        unflagged = np.concatenate([
+            unflagged, np.zeros(n_rows_ms - len(unflagged), dtype=bool)])
     else:
-        full_model = mdl_array.copy()
+        unflagged = unflagged[:n_rows_ms]
 
-    tb_tool.putcol(datacolumn, full_model)
+    n_unflagged = int(np.sum(unflagged))
+    n_model = len(mvis)
+    n_use = min(n_unflagged, n_model)
+
+    # --- Write model visibilities ---
+    tb_tool.open(model_ms, nomodify=False)
+    _write_model_col(tb_tool, datacolumn, mvis, unflagged, n_use,
+                     n_rows_ms, row_shapes)
     tb_tool.flush()
     tb_tool.close()
     print(f"Model MS written to {model_ms}")
@@ -374,21 +482,8 @@ def import_model_to_ms(msfile, u, v, mvis, wle, suffix='model',
         os.system(f'cp -r {msfile} {resid_ms}')
 
         tb_tool.open(resid_ms, nomodify=False)
-        original_data = tb_tool.getcol(datacolumn)
-        # Replace unflagged data with residuals
-        if original_data.ndim == 3:
-            n_chan = original_data.shape[1]
-            resid_data = original_data.copy()
-            for ichan in range(n_chan):
-                resid_data[:, ichan, unflagged[:n_use]] -= \
-                    mvis[:n_use] / n_chan
-        elif original_data.ndim == 2:
-            resid_data = original_data.copy()
-            resid_data[:, unflagged[:n_use]] -= mvis[:n_use]
-        else:
-            resid_data = original_data.copy()
-
-        tb_tool.putcol(datacolumn, resid_data)
+        _write_resid_col(tb_tool, datacolumn, mvis, unflagged, n_use,
+                         n_rows_ms, row_shapes)
         tb_tool.flush()
         tb_tool.close()
         print(f"Residual MS written to {resid_ms}")
