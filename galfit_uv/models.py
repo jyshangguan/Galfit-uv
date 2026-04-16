@@ -503,7 +503,7 @@ def make_model_fn(profiles, tie_center=True, tie_incl=True, tie_pa=True,
         if tie_center:
             geo_labels.extend(['dx', 'dy'])
         else:
-            geo_labels.extend([f'{p1}:dx', f'{p2}:dy', f'{p1}:dy', f'{p2}:dy'])
+            geo_labels.extend([f'{p1}:dx', f'{p2}:dx', f'{p1}:dy', f'{p2}:dy'])
 
         labels.extend(geo_labels)
 

@@ -19,6 +19,17 @@ dependencies = [
 
 [project.optional-dependencies]
 measure = ["spectral-cube", "dynesty"]
+test = ["pytest"]
 
 [tool.setuptools.packages.find]
 include = ["galfit_uv*"]
+
+[tool.pytest.ini_options]
+markers = [
+    "needs_dynesty: test requires dynesty package",
+    "needs_spectral_cube: test requires spectral-cube package",
+]
+testpaths = ["tests"]
+filterwarnings = [
+    "ignore::RuntimeWarning",
+]
