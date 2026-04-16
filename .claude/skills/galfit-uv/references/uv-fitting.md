@@ -1,6 +1,6 @@
-# galfit_uv API Reference
+# UV Fitting API Reference
 
-Complete function signatures for all public functions and classes.
+Function signatures for the UV visibility fitting workflow: export, model, fit, and plot.
 
 ---
 

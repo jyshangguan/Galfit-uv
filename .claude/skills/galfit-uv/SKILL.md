@@ -26,6 +26,11 @@ spawning threads on every CPU core.  If numpy is imported first, it locks in the
 default thread count and each MCMC worker will compete for cores, making
 multi-worker fits extremely slow.
 
+## Reference
+
+- UV fitting API: [references/uv-fitting.md](references/uv-fitting.md)
+- Cube measurement API: [references/cube-measurement.md](references/cube-measurement.md)
+
 ## Workflow
 
 ### Step 1 — Export visibilities
