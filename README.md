@@ -66,6 +66,15 @@ downloaded from: https://drive.google.com/file/d/1TPZQvP-7wc5Kk169Gh6IgiYAUoaug2
 - `numpy`, `scipy`, `emcee`, `dill`, `matplotlib`, `corner`, `astropy`
 - `casatools`, `casatasks` — from the CASA conda environment (not pip-installable)
 
+## Testing
+
+```bash
+pip install -e ".[test]"
+pytest tests/ -v
+```
+
+128 tests across 6 test files. Tests requiring CASA, spectral-cube, or dynesty are automatically skipped.
+
 ## Citation
 
 If you use `galfit_uv` in your research, please cite:

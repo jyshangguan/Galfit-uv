@@ -14,6 +14,8 @@ Parametric UV visibility fitting for ALMA data. galfit-uv extracts visibilities 
 - **Multi-component models** (up to 2 profiles) with configurable geometry tying
 - **Clean imaging** via CASA tclean — data, model, and residual side by side
 - **Diagnostic plots**: UV visibility comparison, corner plots, and walker chains
+- **Spectral line profiles** and cube measurement pipeline (optional)
+- **Unit tests** (128 tests with pytest, optional-dep tests auto-skipped)
 
 ## Installation
 
@@ -33,6 +35,7 @@ pip install -e /path/to/Galfit-uv
 | `matplotlib`, `corner` | pip |
 | `astropy` | pip / conda |
 | `casatools`, `casatasks` | CASA conda environment (not pip-installable) |
+| `pytest` | `pip install -e ".[test]"` (optional, for running tests) |
 
 > **Note:** Always import `galfit_uv` (not submodules directly) so that `__init__.py` can set threading environment variables before numpy loads.
 

@@ -23,6 +23,7 @@ images, and diagnostic figures.
 - Python 3 with CASA conda environment (`casatools`, `casatasks`).
 - Key dependencies: `numpy`, `scipy`, `emcee`, `dill`, `matplotlib`, `corner`, `astropy`.
 - Optional `[measure]` dependencies: `spectral-cube`, `dynesty` (for cube measurement pipeline).
+- Optional `[test]` dependency: `pytest` (for running the unit test suite).
 - Import `galfit_uv` (not submodules directly) so `__init__.py` sets threading env vars before numpy loads.
 
 ## Units Convention
@@ -96,6 +97,18 @@ images, and diagnostic figures.
 | `Plot_Map(mom, ...)` | Moment map visualization |
 | `Plot_Beam(ax, bmaj, bmin, bpa)` | Beam ellipse overlay |
 | `plot_1d_spectrum(x, y, ...)` | Step plot for spectra |
+
+## Testing
+
+Run the test suite with pytest:
+
+```bash
+pytest tests/ -v
+```
+
+- 128 tests across 6 test files covering all modules.
+- Tests requiring CASA, spectral-cube, or dynesty are automatically skipped.
+- Install test dependencies: `pip install -e ".[test]"`
 
 
 ## Development
