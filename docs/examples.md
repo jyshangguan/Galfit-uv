@@ -3,7 +3,105 @@
 This page walks through fitting real ALMA data with galfit-uv using two models:
 a single free-n Sersic and a Sersic(n=1) + point source decomposition.
 
-## Target
+---
+
+## Cube Measurement Pipeline
+
+The `galfit_uv.measure` module measures emission line properties from ALMA
+spectral cubes: source masking, spectrum extraction, line detection, and nested
+sampling fitting with dynesty.
+
+> **Install optional dependencies:** `pip install galfit-uv[measure]`
+
+### Data
+
+A primary-beam-corrected CO(3-2) line cube of **GQC J0054-4955** (z = 2.2512):
+56 channels x 100 x 100 pixels, channel width ~88 km/s, beam 3.46" x 2.86".
+
+### Source Masking
+
+Two methods: **circular aperture** (simple, for non-detections) and **SNR
+threshold** (adapts to emission morphology, for detections).
+
+```python
+from galfit_uv.measure import compare_source_masks
+
+fig, masks = compare_source_masks(
+    cube, nbeam=1, nsigma=2,
+    freq_range=[106.27, 106.6],  # GHz, line emission channels
+)
+```
+
+![Mask comparison](figs/measure_mask_comparison.png)
+
+### Detection and Line Profile Fitting
+
+`quick_measure` runs the full pipeline: masking, moment-0 map, spectrum
+extraction, and optional line fitting.
+
+```python
+from galfit_uv.measure import quick_measure
+import astropy.units as u
+
+res = quick_measure(
+    cube,
+    freq_line=106.36 * u.GHz,
+    freq_range=[106.27, 106.6],
+    mask_method='snr',
+    nsigma=2,
+    detect=True,
+    fit=True,
+    fit_model='double_peak',  # or 'gaussian', 'double_peak_asym'
+    nlive=500,
+    dlogz=0.01,
+)
+```
+
+Three line profile models are available:
+
+| Model | Description |
+|-------|-------------|
+| `gaussian` | Simple Gaussian (3 params) |
+| `double_peak` | Symmetric double-horn, Tiley+ 2016 (5 params) |
+| `double_peak_asym` | Asymmetric double-horn (7 params) |
+
+![Detection and fit](figs/measure_quick_detection.png)
+
+### Results
+
+| Parameter | Value |
+|-----------|-------|
+| Integrated flux (fit) | 1.98 ± 0.04 Jy km/s |
+| W50 (line width) | 630 ± 12 km/s |
+| Velocity center | -208 ± 4 km/s |
+| Measured redshift | 2.24895 ± 0.00005 |
+
+The summed and fitted fluxes are fully consistent, confirming the Double Peak
+model describes the line well.
+
+![Frequency confirmation](figs/measure_freq_confirmation.png)
+
+### Non-detection Upper Limits
+
+For undetected sources, `quick_measure(detect=False)` computes a 3-sigma
+upper limit on the integrated line flux:
+
+```python
+res = quick_measure(
+    cube, freq_line=106.36 * u.GHz,
+    mask_method='circular', nbeam=1,
+    detect=False, vrange=400 * u.km / u.s,
+)
+# 3-sigma upper limit: ~0.08 Jy km/s
+```
+
+![Non-detection](figs/measure_nondetection.png)
+
+> Full details: see `galfit_uv/demo/report_measure.md` and `galfit_uv/demo/run_demo_measure.py`.
+
+---
+
+## UV Visibility Fitting
 
 **GQC J0054-4955** observed in CO(3-2) at z ~ 2.5.
 
