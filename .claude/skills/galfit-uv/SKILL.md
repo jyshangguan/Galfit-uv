@@ -126,7 +126,16 @@ result = fit_mcmc(
 - **Ensure `galfit_uv` was imported before numpy** (see Prerequisites), otherwise
   numpy's multi-threaded BLAS will consume all cores and the parallel MCMC will be
   orders of magnitude slower.
-- Returns `MCMCResult` with `.bestfit`, `.samples`, `.labels`, `.outpath`.
+- Returns `MCMCResult` with `.bestfit`, `.samples`, `.labels`, `.outpath`, `.fit_stats`.
+
+**Post-fit statistics** (automatically computed and stored in `result.fit_stats`):
+- `chi2`, `dof`, `redchi2`, `bic`, `ndata`, `n_free`
+- Can also be computed manually with `compute_fit_stats`:
+
+```python
+from galfit_uv.fit import compute_fit_stats
+stats = compute_fit_stats(dvis, model_fn, result.bestfit, n_free_params=len(result.free_labels))
+```
 
 **Output files** (in `outpath`):
 - `fit_results.fits` — multi-extension FITS with data, model, best-fit params, samples, fit statistics

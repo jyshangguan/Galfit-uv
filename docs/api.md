@@ -273,6 +273,34 @@ compute_fit_stats(dvis, model_fn, theta_full, n_free_params)
 
 ### `fit_mcmc`
 
+Compute goodness-of-fit statistics for visibility data. Each complex visibility point contributes 2 independent real DOF (real and imaginary parts).
+
+```python
+compute_fit_stats(dvis, model_fn, theta_full, n_free_params)
+```
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `dvis` | Visibility | required | Data visibility object |
+| `model_fn` | callable | required | `model_fn(theta, uv) -> complex ndarray` |
+| `theta_full` | ndarray | required | Full parameter vector (all params, including any fixed) |
+| `n_free_params` | int | required | Number of free (non-fixed) parameters |
+
+**Returns:** `dict`
+
+| Key | Type | Description |
+|-----|------|-------------|
+| `chi2` | float | Sum of weighted squared residuals |
+| `dof` | int | `2 * N_vis - n_free_params` |
+| `redchi2` | float | `chi2 / dof` |
+| `bic` | float | `chi2 + n_free * log(2 * N_vis)` |
+| `ndata` | int | `2 * N_vis` |
+| `n_free` | int | Number of free parameters |
+
+---
+
+### `fit_mcmc`
+
 Run MCMC fitting using emcee. All prior configuration is derived from `param_info` (set by `make_model_fn`).
 
 ```python

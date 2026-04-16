@@ -260,6 +260,65 @@ make_model_fn(profiles, tie_center=True, tie_incl=True, tie_pa=True,
 
 ## Fitting Functions
 
+### `compute_fit_stats`
+
+**Module:** `galfit_uv.fit`
+
+Compute goodness-of-fit statistics for visibility data.  Each complex visibility
+point contributes 2 independent real DOF (real and imaginary parts).
+
+```python
+compute_fit_stats(dvis, model_fn, theta_full, n_free_params)
+```
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `dvis` | Visibility | required | Data visibility object |
+| `model_fn` | callable | required | `model_fn(theta, uv) -> complex ndarray` |
+| `theta_full` | ndarray | required | Full parameter vector (all params, including any fixed) |
+| `n_free_params` | int | required | Number of free (non-fixed) parameters |
+
+**Returns:** `dict`
+
+| Key | Type | Description |
+|-----|------|-------------|
+| `chi2` | float | Sum of weighted squared residuals |
+| `dof` | int | `2 * N_vis - n_free_params` |
+| `redchi2` | float | `chi2 / dof` |
+| `bic` | float | `chi2 + n_free * log(2 * N_vis)` |
+| `ndata` | int | `2 * N_vis` |
+| `n_free` | int | Number of free parameters |
+
+---
+
+### `LogProbability`
+
+**Module:** `galfit_uv.fit`
+
+Picklable log-probability function for emcee.  Supports three prior types:
+`sin(incl)` for inclination, Jeffreys (`1/theta`) for `'log'`-scale params,
+uniform for `'linear'`.  When fixed parameters are set, `__call__` accepts a
+free-only theta vector and reconstructs the full vector before evaluation.
+
+```python
+LogProbability(model_fn, u, v, vis, wgt, p_ranges_info, labels,
+               fixed_indices=None, fixed_values=None, full_ndim=None)
+```
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `model_fn` | callable | required | `model_fn(theta, uv) -> complex ndarray` |
+| `u`, `v` | ndarray | required | UV coordinates in wavelengths |
+| `vis` | ndarray | required | Data visibilities (complex, Jy) |
+| `wgt` | ndarray | required | Visibility weights |
+| `p_ranges_info` | list | required | `[(lo, hi, scale), ...]` for all params |
+| `labels` | list | required | Parameter label strings |
+| `fixed_indices` | list or None | `None` | Indices of fixed params |
+| `fixed_values` | list or None | `None` | Values of fixed params |
+| `full_ndim` | int or None | `None` | Full parameter dimension (auto-derived if None) |
+
+---
+
 ### `fit_mcmc`
 
 **Module:** `galfit_uv.fit`
