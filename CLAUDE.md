@@ -15,11 +15,14 @@ images, and diagnostic figures.
 | `galfit_uv/models.py` | Profile functions and Hankel transforms (`vis_point`, `vis_gaussian`, `vis_sersic`, `make_model_fn`) |
 | `galfit_uv/fit.py` | MCMC sampler with emcee (`fit_mcmc`, `MCMCResult`) |
 | `galfit_uv/plot.py` | UV plots, MS import, tclean imaging (`plot_uv`, `import_model_to_ms`, `clean_image`, `plot_clean_images`) |
+| `galfit_uv/lineprofiles.py` | Spectral line profile functions (`Gaussian`, `Gaussian_DoublePeak`, `Gaussian_DoublePeak_Asymmetric`) |
+| `galfit_uv/measure.py` | Cube measurement pipeline (`source_mask`, `extract_spectrum`, `detect_source`, `quick_measure`, `fit_dynesty`) |
 
 ## Environment
 
 - Python 3 with CASA conda environment (`casatools`, `casatasks`).
 - Key dependencies: `numpy`, `scipy`, `emcee`, `dill`, `matplotlib`, `corner`, `astropy`.
+- Optional `[measure]` dependencies: `spectral-cube`, `dynesty` (for cube measurement pipeline).
 - Import `galfit_uv` (not submodules directly) so `__init__.py` sets threading env vars before numpy loads.
 
 ## Units Convention
@@ -79,3 +82,34 @@ images, and diagnostic figures.
 | `import_model_to_ms(msfile, u, v, mvis, wle)` | Write model vis into MS copy |
 | `clean_image(msfile, u, v, mvis, wle)` | Run tclean on data/model/residual |
 | `plot_clean_images(data, model, resid, beam)` | Three-panel clean image figure |
+| `Gaussian(x, a, b, c)` | Gaussian line profile |
+| `Gaussian_DoublePeak(x, ag, ac, v0, sigma, w)` | Double-horn profile (Tiley+ 2016) |
+| `Gaussian_DoublePeak_Asymmetric(x, ag_l, ag_r, ac, v0, sigma, w_l, w_r)` | Asymmetric double-horn profile |
+| `source_mask(cube, nbeam, offset)` | Circular aperture mask |
+| `source_mask_snr(cube, nbeam, nsigma, ...)` | SNR threshold mask with segment filtering |
+| `field_mask(cube, radius)` | Field boundary mask |
+| `extract_spectrum(cube, mask_src, perbeam)` | Extract 1D spectrum from cube |
+| `detect_source(cube, ...)` | Detect source and extract spectrum |
+| `quick_measure(cube, freq_line, ...)` | Top-level: detect + plot + optional fit |
+| `fit_dynesty(x, y, yerr, model_type, ...)` | Nested sampling fit with dynesty |
+| `calculate_w50(x, y)` | Width at 50% of peak |
+| `Plot_Map(mom, ...)` | Moment map visualization |
+| `Plot_Beam(ax, bmaj, bmin, bpa)` | Beam ellipse overlay |
+| `plot_1d_spectrum(x, y, ...)` | Step plot for spectra |
+
+
+## Development
+
+The working directory for developing new features of this package is `dev/` which is not tracked by git. Create one if it does not exist. Use the following strategy for the development.
+- Create a `develop_note.md` file, if it does not exist, to record all the features and functions added.
+- Create a `problem_note.md` file, if it does not exist, to record the existing problems or commonly happened errors.
+- Create a `tasks_note.md` file, if it does not exist, to record the current tasks and action items. Check all the items when they are done.
+- Keep updating the above files. Everytime when planning a new task, always read these files first to understand the status.
+- The user may use the `prompt.md` file to record the prompts.
+
+### Completeness check
+
+After the development of a key feature, always remember to check the following,
+- Update the unittests so that the new features are tested and the old tests are still working.
+- Update the skills to be consistent with the modified code.
+- Update the docs so that the new features are updated.
