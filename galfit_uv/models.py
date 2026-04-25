@@ -107,7 +107,7 @@ def _normalize_SB(SB, flux_mJy, cb):
     Inu : ndarray
         Surface brightness in Jy/arcsec^2.
     """
-    area = np.trapz(2.0 * np.pi * SB * cb, cb)
+    area = np.trapezoid(2.0 * np.pi * SB * cb, cb)
     if area == 0.0:
         return np.zeros(len(cb))
     return flux_mJy * SB / area * 1e-3  # mJy -> Jy
